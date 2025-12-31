@@ -1,12 +1,136 @@
-# S500 Autonomous Drone Project
+# S500 Autonomous Drone Project: A Comprehensive Beginner's Guide
 
-![Build Status](https://img.shields.io/badge/Build_Status-Complete-success?style=for-the-badge) ![Platform](https://img.shields.io/badge/Platform-S500-blue?style=for-the-badge&logo=drone)
+![Build Status](https://img.shields.io/badge/Build_Status-Complete-success?style=for-the-badge) ![Platform](https://img.shields.io/badge/Platform-S500-blue?style=for-the-badge&logo=drone) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+## 📖 Table of Contents
+1.  [Project Overview](#-project-overview)
+2.  [System Architecture](#-system-architecture)
+    *   [Project Lifecycle Flowchart](#project-lifecycle-flowchart)
+    *   [System Block Diagram](#system-block-diagram)
+3.  [Terminology: The Engineer's Dictionary](#-terminology-the-engineers-dictionary)
+4.  [Component Deep-Dive](#-component-deep-dive)
+    *   [Why the S500?](#why-the-s500-frame)
+    *   [The Skydroid T10 Advantage](#the-skydroid-t10-advantage)
+5.  [Mechanical Build Guide](#-mechanical-build-guide)
+    *   [Motor Orientation](#motor-orientation)
+    *   [Vibration Dampening](#vibration-dampening)
+6.  [Calibration Checklist](#-calibration-checklist)
+7.  [Build Gallery](#-build-gallery)
+8.  [Bill of Materials (BOM)](#-bill-of-materials-bom)
+
+---
 
 ## 🚁 Project Overview
 
-This repository documents the build and configuration of a custom **S500 Autonomous Drone**. Built on the robust PCB-integrated S500 airframe, this quadcopter is designed for stability and payload versatility. It features a dual-stack flight intelligence system capability (Radiolink CrossFlight / Pixhawk 2.4.8) and a high-fidelity video link system.
+This repository documents the build, configuration, and operation of a custom **S500 Autonomous Drone**. Built on the robust PCB-integrated S500 airframe, this quadcopter is designed for stability and navigational precision.
 
-The primary goal of this project is to establish a reliable aerial platform for autonomous waypoint navigation and aerial imaging.
+The primary goal of this project is to demystify autonomous flight systems for beginners, creating a reliable platform for waypoint navigation and aerial imaging using the **Radiolink CrossFlight/Pixhawk** ecosystem.
+
+## 🏗️ System Architecture
+
+### Project Lifecycle Flowchart
+This flowchart visualizes the journey from initial research to the first autonomous mission.
+
+```mermaid
+graph TD
+    A[<b>Research Phase</b><br/>Payload, Range, & Budget] --> B[<b>Component Selection</b><br/>S500 Frame + Crossflight FC]
+    B --> C[<b>Procurement</b><br/>Robu.in Logistics]
+    C --> D[<b>Hardware Integration</b><br/>Soldering, PDB, & Assembly]
+    D --> E[<b>Firmware Configuration</b><br/>Mission Planner & ArduPilot]
+    E --> F[<b>Calibration & Safety</b><br/>ESC, Compas, & RTL Tests]
+    F --> G[<b>Flight Operations</b><br/>Autonomous Waypoints]
+```
+
+### System Block Diagram
+The "nervous system" of the drone, illustrating how the Flight Controller (FC) interacts with peripherals.
+
+```mermaid
+graph LR
+    subgraph "Control Loop"
+    FC[Flight Controller] <--> GPS[TS100 GPS]
+    FC <--> RX[Skydroid T10 Receiver]
+    end
+
+    subgraph "Power & Propulsion"
+    BATT[4S LiPo] --> PM[Power Module]
+    PM --> PDB[PCB Frame Board]
+    PDB --> ESC[30A ESCs]
+    ESC --> M[2212 920KV Motors]
+    end
+
+    subgraph "Vision System"
+    GIMBAL[2-Axis Gimbal] --> CAM[1080p Camera]
+    CAM --> RX
+    end
+```
+
+---
+
+## 📚 Terminology: The Engineer's Dictionary
+
+> [!TIP]
+> Understanding these terms is the first step to becoming a drone pilot!
+
+*   **Pitch, Roll, Yaw**: The three axes of flight. **Pitch** is tilting forward/backward, **Roll** is tilting left/right, and **Yaw** is rotating around the center (spinning).
+*   **KV Rating**: Constants for "RPM per Volt". A **920KV** motor spins at 920 RPM for every volt applied. Lower KV = more torque (larger props), Higher KV = more speed (smaller props).
+*   **ESC (Electronic Speed Controller)**: The muscle of the drone. It converts DC power from the battery into 3-phase AC pulses to drive the brushless motors. Protocols like **DSHOT** allow faster communication than older PWM signals.
+*   **LiPo 'S' Rating**: Stands for "Series". A **3S** battery has 3 cells (11.1V nominal), while a **4S** has 4 cells (14.8V). Higher voltage generally equals more power and efficiency.
+*   **RTL (Return to Launch)**: A failsafe mode where the drone uses GPS to automatically fly back to its takeoff point and land.
+
+---
+
+## 🔍 Component Deep-Dive
+
+### Why the S500 Frame?
+We selected the **S500 PCB Version** over generic F450 frames for two key reasons:
+1.  **Integrated PDB**: The bottom plate of the frame is a Printed Circuit Board (PCB). You solder ESC power wires *directly* to the frame pads. This eliminates the need for a separate Power Distribution Board, reducing weight and failure points.
+2.  **Angled Arms**: The upswept arms provide a "dihedral" effect, offering greater stability in flight compared to flat-armed frames.
+
+### The Skydroid T10 Advantage
+The **Skydroid T10** is not just a remote; it's a **3-in-1 System**:
+*   **RC Control**: Long-range 2.4GHz control links.
+*   **Telemetry**: Sends drone health data (Voltage, Altitude, GPS Satellites) back to your phone/tablet.
+*   **Video Link**: Integrated video transmission allows you to view the camera feed on the QGroundControl/Skydroid app without extra video transmitters.
+*   **Range**: Capable of 10km+ video/data transmission, far exceeding standard hobby radios.
+
+*Buying Source: Obtained from **Robu.in** to ensure genuine parts and reliable shipping logistics.*
+
+---
+
+## 🔧 Mechanical Build Guide
+
+### Motor Orientation
+A quadcopter requires two motors to spin **Clockwise (CW)** and two **Counter-Clockwise (CCW)** to cancel out torque.
+*   **Silver Cap Motors**: Usually CCW.
+*   **Black Cap Motors**: Usually CW.
+*   **Critical Step**: Ensure your propellers match the motor direction. A CW prepeller on a CCW motor will not generate lift correctly and may loosen the nut!
+
+### Vibration Dampening
+Vibration is the enemy of the Flight Controller (FC).
+*   The **Pixhawk/CrossFlight** contains sensitive accelerometers.
+*   Always mount the FC using the provided **Anti-vibration Shock Absorber Plate**.
+*   **Pro Tip**: Balance your propellers! Unbalanced props are the #1 source of "jello" in video and poor flight performance.
+
+---
+
+## ⚙️ Calibration Checklist
+
+Before the maiden flight, you **MUST** complete these steps in Mission Planner/QGroundControl:
+
+1.  **Accelerometer Calibration**:
+    *   Place the drone on a perfectly level surface.
+    *   Follow the on-screen prompts to place the drone on its nose, left side, right side, back, and top.
+2.  **Compass Calibration**:
+    *   **Go Outside!** Never calibrate indoors near wifi routers or metal beams.
+    *   Rotate the drone in all axes until the bar hits 100%. This tells the drone where "North" is.
+3.  **Radio Calibration**:
+    *   ensures the FC knows the min/max range of your sticks and switches.
+    *   Set up your **Flight Modes** (Stabilize, Loiter, RTL) on a 3-position switch here.
+
+> [!WARNING]
+> **ESC Calibration**: Remove propellers before doing this! This creates the synchronization between your throttle stick and the motor speed.
+
+---
 
 ## 📸 Build Gallery
 
@@ -19,26 +143,6 @@ The primary goal of this project is to establish a reliable aerial platform for 
 |:---:|:---:|
 | <img src="images/droneflyinggrid3.jpg" width="400" alt="Flight Test"> | <img src="images/dronemotorprpellorcinematic.jpg" width="400" alt="Propulsion System"> |
 | <img src="images/droneremotecameramovilelivefeed.jpg" width="400" alt="Ground Control"> | <img src="images/frameremoteconnector.jpg" width="400" alt="Frame Assembly"> |
-
----
-
-## 🛠️ Technical Specifications
-
-### Airframe & Propulsion
-*   **Frame**: S500 SK500 Quadcopter (PCB Version) for clean power distribution.
-*   **Motors**: 2212 920KV Brushless DC Motors (CW/CCW).
-*   **ESCs**: BLHeli_S LITTLEBEE 30A-S OPTO (2-6S LiPo support).
-*   **Propellers**: 9450 Self-Locking props for efficiency and safety.
-
-### Flight Intelligence
-*   **Primary Controller**: Radiolink CrossFlight / Pixhawk 2.4.8 (32-Bit).
-*   **GPS**: Radiolink TS100 Mini GPS / Standard M8N GPS.
-*   **Mounting**: Anti-vibration shock absorber plates for IMU stability.
-
-### Power System
-*   **Battery**: Orange 4S 4500mAh 35C / 3S 2200mAh 30C LiPo.
-*   **Charging**: IMAX B6 AC Professional Balance Charger.
-*   **Distribution**: Integrated PCB frame + APM Power Module (XT60).
 
 ---
 
