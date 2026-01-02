@@ -2,23 +2,7 @@
 
 ![Build Status](https://img.shields.io/badge/Build_Status-Complete-success?style=for-the-badge) ![Platform](https://img.shields.io/badge/Platform-S500-blue?style=for-the-badge&logo=drone) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## 📖 Table of Contents
-1.  [Project Overview](#-project-overview)
-2.  [System Architecture](#-system-architecture)
-    *   [Project Lifecycle Flowchart](#project-lifecycle-flowchart)
-    *   [System Block Diagram](#system-block-diagram)
-3.  [Terminology: The Engineer's Dictionary](#-terminology-the-engineers-dictionary)
-4.  [Component Deep-Dive](#-component-deep-dive)
-    *   [Why the S500?](#why-the-s500-frame)
-    *   [The Skydroid T10 Advantage](#the-skydroid-t10-advantage)
-5.  [Mechanical Build Guide](#-mechanical-build-guide)
-    *   [Motor Orientation](#motor-orientation)
-    *   [Vibration Dampening](#vibration-dampening)
-6.  [Calibration Checklist](#-calibration-checklist)
-7.  [Build Gallery](#-build-gallery)
-8.  [Bill of Materials (BOM)](#-bill-of-materials-bom)
 
----
 
 ## 🚁 Project Overview
 
@@ -41,28 +25,7 @@ graph TD
     F --> G[<b>Flight Operations</b><br/>Autonomous Waypoints]
 ```
 
-### System Block Diagram
-The "nervous system" of the drone, illustrating how the Flight Controller (FC) interacts with peripherals.
 
-```mermaid
-graph LR
-    subgraph "Control Loop"
-    FC[Flight Controller] <--> GPS[TS100 GPS]
-    FC <--> RX[Skydroid T10 Receiver]
-    end
-
-    subgraph "Power & Propulsion"
-    BATT[4S LiPo] --> PM[Power Module]
-    PM --> PDB[PCB Frame Board]
-    PDB --> ESC[30A ESCs]
-    ESC --> M[2212 920KV Motors]
-    end
-
-    subgraph "Vision System"
-    GIMBAL[2-Axis Gimbal] --> CAM[1080p Camera]
-    CAM --> RX
-    end
-```
 
 ---
 
